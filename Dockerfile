@@ -1,1 +1,18 @@
-# === STAGE 1: Build the React Frontend ===echo FROM node:18-alpine AS frontend-builderecho WORKDIR /app/frontendecho COPY amazon-frontend/package*.json ./echo RUN npm installecho COPY amazon-frontend/ ./echo RUN npm run buildecho.echo # === STAGE 2: Run the Node/Express Backend ===echo FROM node:18-alpineecho WORKDIR /appecho ENV NODE_ENV=productionecho COPY amazon-backend/package*.json ./echo RUN npm install --only=productionecho COPY amazon-backend/ ./echo COPY --from=frontend-builder /app/frontend/build ./publicecho EXPOSE 5000echo CMD ["node", "server.js"]
+# === STAGE 1: Build Frontend ===
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app/frontend
+COPY amazon-frontend/package*.json ./
+RUN npm install
+COPY amazon-frontend/ ./
+RUN npm run build
+
+# === STAGE 2: Run Backend ===
+FROM node:18-alpine
+WORKDIR /app
+ENV NODE_ENV=production
+COPY amazon-backend/package*.json ./
+RUN npm install --only=production
+COPY amazon-backend/ ./
+COPY --from=frontend-builder /app/frontend/build ./public
+EXPOSE 5000
+CMD ["node", "server.js"]

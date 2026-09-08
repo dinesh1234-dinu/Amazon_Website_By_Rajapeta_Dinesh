@@ -39,3 +39,10 @@ app.get('/',(req,res)=>res.status(200).send('Hello Debjit here. It is Amazon clo
 // Listening to  server
 
 app.listen(port,()=>console.log(`Listening on local host:${port}`))
+
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+const PORT = process.env.PORT || 5000;
