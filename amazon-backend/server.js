@@ -12,6 +12,7 @@ const app = express();
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
  
+const mongodbUrl = process.env.MONGODB_URL || 'mongodb://127.0.0.1/amazon'; 
 mongoose.connect(mongodbUrl, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('Connected to MongoDB')).catch((err) => console.log('MongoDB connection error:', err.message)); 
  
 app.use('/api/users', userRouter); 
@@ -29,6 +30,7 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message }); 
 }); 
  
+const port = process.env.PORT || 5000; 
 app.listen(port, '0.0.0.0', () => { 
   console.log('Server serving at http://0.0.0.0:' + port); 
 }); 
